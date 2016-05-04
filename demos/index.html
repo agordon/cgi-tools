@@ -1,0 +1,60 @@
+<html>
+<head>
+</head>
+<body>
+<h1>CGI Examples</h1>
+
+<h2>Simple scripts (no input parameters)</h2>
+
+<ul>
+  <li><a href="/cgi-bin/simple.sh">simple.sh</a>
+    (shell script)</li>
+  <li><a href="/cgi-bin/simple.py">simple.py</a>
+    (python script + jinja2 template)</li>
+  <li><a href="/cgi-bin/import-test.py">import-test.py</a>
+    (Stub using gordon-cgi module in a python CGI script)</li>
+  <li><a href="/cgi-bin/cputime-error.py">cputime-error.py</a>
+    (example of script running for too-long, raises a server-error)</li>
+</ul>
+
+<h2>CGI Parameters </h2>
+
+<ul>
+  <li>
+    <form method="GET" action="/cgi-bin/get-params.py">
+      <b>Pure Python:</b>
+      name: <input type="text" size="6" name="name" value="">
+      age: <input type="text" size="6" name="age" value="">
+      <input type="submit" value="go">
+      (only lower-case english names accepted, try others for errors)
+    </form>
+  </li>
+
+  <li>
+    <form method="GET" action="/cgi-bin/gnu-date-delta.py">
+      <b>Python scripts, runs an external command:</b>
+      <br/>
+      calculate delta from today: <input type="text" size="10" name="d" value="+ 3 days">
+      format: <select name="f">
+               <option value="">(default)</option>
+               <option value="8601">iso-8601</option>
+               <option value="2822">rfc-2822</option>
+               <option value="3339">rfc-3339</option>
+              </select>
+      <input type="submit" value="go">
+    </form>
+  </li>
+
+  <li>
+    Calculate SHA1 checksum on a file:
+    <form method="POST" action="/cgi-bin/file-checksum.py"
+          enctype="multipart/form-data">
+      <input type="file" name="datafile" />
+      <input type="submit" value="checksum" />
+      (limited to 1MB files)
+    </form>
+  </li>
+</ul>
+
+</body>
+</html>
