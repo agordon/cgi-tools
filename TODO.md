@@ -5,6 +5,12 @@ TODO List
 * Documentation
     * Describe scripts
     * Docstring exported functions (https://www.python.org/dev/peps/pep-0257/)
+    * Upload documentation to http://pythonhosted.org/cgi-tools
+    * Webservers CGI setup
+        * Busybox's HTTPD (+optional local-unix socket support)
+        * lighttpd
+        * nginx + fcgiwrap + spawncgi
+        * apache
 * version 2: use pythonian idioms
 * add resource tests
     * file size limits
