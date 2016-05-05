@@ -5,7 +5,7 @@ Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
 License: BSD (See LICENSE file)
 """
 
-from cgi_tools import force_C_locale, set_resource_limits
+from cgi_tools import force_C_locale, set_resource_limits, set_app_code
 
 def cgi_main():
     print "Content-Type: text/plain"
@@ -14,6 +14,7 @@ def cgi_main():
 
 
 if __name__ == "__main__":
+    set_app_code(122)
     set_resource_limits(walltime=3)
     force_C_locale()
     cgi_main()

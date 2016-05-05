@@ -11,7 +11,7 @@ from jinja2 import Template
 from subprocess import Popen, PIPE
 from cgi_tools import force_C_locale, set_resource_limits, \
                       http_bad_request_error,  http_server_error, \
-                      valid_regex, run_cmd_list
+                      valid_regex, run_cmd_list, set_app_code
 
 def valid_delta(v):
     return valid_regex("[-a-zA-Z0-9: \.\+]+",v)
@@ -107,6 +107,7 @@ def cgi_main():
 
 
 if __name__ == "__main__":
+    set_app_code(124)
     set_resource_limits(walltime=4)
     force_C_locale()
     cgi_main()

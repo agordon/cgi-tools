@@ -4,12 +4,21 @@ Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
 License: BSD (See LICENSE file)
 """
 from __future__ import print_function
-import sys, random
+import sys, random, os
 
-def generate_request_code():
-    return 512 + random.uniform(0,1)
+req_code = ""
 
-req_code = generate_request_code()
+def set_app_code(app_code):
+    global req_code
+    req_code = int(app_code) + random.uniform(0,1)
+
+
+# Get 4 random bytes, convert to unsigned 32-bit int, use as seed.
+s = reduce(lambda x,y: x*y, map(ord,os.urandom(4)))
+random.seed(s)
+# Set default application code + random request code
+set_app_code(512)
+
 
 def log(*args):
     """ Write MSG to STDERR """
@@ -40,6 +49,8 @@ def http_error(http_code,http_status,msg):
     print ("Status: %d %s" % (http_code, http_status))
     print ("Content-Type: text/plain")
     print ("")
+    prefix = "request %s: " % str(req_code)
+    msg = prefix + msg
     print (msg)
     sys.exit(1)
 
