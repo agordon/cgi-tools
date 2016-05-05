@@ -1,3 +1,8 @@
+"""
+CGI-Tools Python Package
+Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+License: BSD (See LICENSE file)
+"""
 import re
 from .http_responses import http_server_error
 

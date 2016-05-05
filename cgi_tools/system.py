@@ -1,3 +1,8 @@
+"""
+CGI-Tools Python Package
+Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+License: BSD (See LICENSE file)
+"""
 from __future__ import print_function
 import sys, os, cgi, re, locale, resource, time, signal
 from subprocess import Popen, PIPE

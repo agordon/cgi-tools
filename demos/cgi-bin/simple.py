@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+"""
+CGI-Tools Python Package
+Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+License: BSD (See LICENSE file)
+"""
 
 from jinja2 import Template
 import platform

@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+"""
+CGI-Tools Python Package
+Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+License: BSD (See LICENSE file)
+"""
+
 import BaseHTTPServer
 import CGIHTTPServer
 import sys, os

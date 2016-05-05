@@ -1,8 +1,14 @@
-# Limit runtime to 1 second of %100 CPU time,
-# then run an external program which waste CPUs.
+"""
+CGI-Tools Python Package
+Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+License: BSD (See LICENSE file)
 
-# The child program will get SIGXCPU and will terminate (coredump).
-# This script (the parent) will get see a non-zero exitcode.
+Limit runtime to 1 second of %100 CPU time,
+then run an external program which waste CPUs.
+
+The child program will get SIGXCPU and will terminate (coredump).
+This script (the parent) will get see a non-zero exitcode.
+"""
 
 import os
 from cgi_tools import set_resource_limits, run_cmd_list

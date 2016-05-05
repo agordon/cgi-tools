@@ -1,3 +1,8 @@
+"""
+CGI-Tools Python Package
+Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+License: BSD (See LICENSE file)
+"""
 import unittest
 
 from cgi_tools import valid_int, valid_float, valid_regex
