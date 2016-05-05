@@ -18,12 +18,12 @@ setup(
 
     license = "BSD",
     keywords = "CGI",
-    url = "",
+    url = "https://github.com/agordon/cgi-tools",
     packages=['cgi_tools'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: BSD License",
-        "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: CGI Tools/Libraries"
+        "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: CGI Tools/Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
     test_suite = 'tests',

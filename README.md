@@ -7,8 +7,9 @@ Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
 
 License: BSD
 
-https://github.com/agordon/cgi-tools
+Source Code: https://github.com/agordon/cgi-tools
 
+Package Information: https://pypi.python.org/pypi/cgi-tools
 
 Installation
 ============
