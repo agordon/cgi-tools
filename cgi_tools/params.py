@@ -5,7 +5,7 @@ License: BSD (See LICENSE file)
 """
 from tempfile import NamedTemporaryFile
 from .http_responses import http_bad_request_error, http_server_error, log
-from .system import is_string
+from .system import to_str_list
 
 def save_cgi_file_param(form,var_name,suffix=None):
     if not var_name in form:
@@ -67,9 +67,7 @@ def get_cgi_first_non_empty_param(form,param_names):
     The returned value is not necessarily valid text (could be UTF-8,
     invalid UTF-8, other encoding, or binary data).
     """
-
-    if is_string(param_names):
-        param_names = [ param_names ]
+    param_names = to_str_list (param_names)
 
     for p in param_names:
         text = form.getfirst(p,"")
