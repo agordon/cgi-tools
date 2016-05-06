@@ -54,6 +54,22 @@
       (limited to 1MB files)
     </form>
   </li>
+
+  <li>
+    Count characters,words,lines on input data or file:
+    <form method="POST" action="/cgi-bin/wordcount.py"
+          enctype="multipart/form-data">
+      paste input text:
+      <br/>
+      <textarea name="text_str" rows="10" cols="50"></textarea>
+      <br/>
+      or upload  a file:
+      <input type="file" name="text_file" />
+      <br/>
+      <input type="submit" value="count" />
+    </form>
+  </li>
+
 </ul>
 
 </body>
