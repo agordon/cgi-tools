@@ -5,6 +5,7 @@ License: BSD (See LICENSE file)
 """
 import re
 from .http_responses import http_server_error
+from .system import to_str_list
 
 def valid_regex(regex,value):
     """
@@ -42,3 +43,17 @@ def valid_float(i):
     except ValueError as e:
         return False;
 
+
+def valid_in_list(v,l):
+    """
+    returns TRUE if str(v) is in list.
+    returns FALSE otherwise.
+    returns FALSE if v is None, or empty string.
+    """
+    l = to_str_list(l)
+    if v is None:
+        return False
+    v = str(v).strip()
+    if not v:
+        return False
+    return v in l

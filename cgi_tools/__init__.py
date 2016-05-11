@@ -10,6 +10,6 @@ from .system import force_C_locale, set_resource_limits, \
 from .http_responses import http_bad_request_error, http_server_error, \
                             http_error, log, set_app_code
 
-from .validators import valid_regex, valid_int, valid_float
+from .validators import valid_regex, valid_int, valid_float, valid_in_list
 
 from .params import save_cgi_file_param, get_cgi_first_non_empty_param

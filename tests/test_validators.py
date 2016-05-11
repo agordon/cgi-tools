@@ -5,7 +5,7 @@ License: BSD (See LICENSE file)
 """
 import unittest
 
-from cgi_tools import valid_int, valid_float, valid_regex
+from cgi_tools import valid_int, valid_float, valid_regex, valid_in_list
 
 class ValidatorsTests(unittest.TestCase):
 
@@ -42,6 +42,15 @@ class ValidatorsTests(unittest.TestCase):
         self.assertFalse(valid_regex("[a-z]+", None))
         self.assertTrue (valid_regex("[_a-z][_a-z0-9]*", "da4324"))
         self.assertFalse(valid_regex("[_a-z][_a-z0-9]*", "4324"))
+
+    def test_valid_in_list(self):
+        self.assertTrue (valid_in_list("a",  ["a","b","c"]) )
+        self.assertFalse(valid_in_list("",   ["a","b","c"]) )
+        self.assertFalse(valid_in_list(None, ["a","b","c"]) )
+        self.assertFalse(valid_in_list("d",  ["a","b","c"]) )
+
+        self.assertTrue (valid_in_list(1, [1,2,3] ))
+
 
 if __name__ == '__main__':
     unittest.main()
