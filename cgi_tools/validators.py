@@ -5,7 +5,7 @@ License: BSD (See LICENSE file)
 """
 import re
 from .http_responses import http_server_error
-from .system import to_str_list
+from .types import to_str_list
 
 def valid_regex(regex,value):
     """

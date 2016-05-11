@@ -8,9 +8,9 @@ import unittest
 from time import sleep
 import math, os
 
-from cgi_tools.system import is_string, is_iterable, to_str_list
+from cgi_tools.types import is_string, is_iterable, to_str_list
 
-class SystemInternalsTests(unittest.TestCase):
+class TypesTests(unittest.TestCase):
     def test_is_string(self):
         self.assertTrue ( is_string( "hello"    ) )
         self.assertTrue ( is_string( ""         ) )

@@ -5,7 +5,7 @@ License: BSD (See LICENSE file)
 """
 from tempfile import NamedTemporaryFile
 from .http_responses import http_bad_request_error, http_server_error, log
-from .system import to_str_list
+from .types import to_str_list
 
 def save_cgi_file_param(form,var_name,suffix=None):
     if not var_name in form:
