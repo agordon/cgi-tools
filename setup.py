@@ -5,10 +5,11 @@ License: BSD (See LICENSE file)
 """
 
 from setuptools import setup
+from detect_version import detect_version
 
 setup(
     name = "cgi-tools",
-    version = "0.0.1",
+    version = detect_version("cgi_tools"),
 
     author = "Assaf Gordon",
     author_email = "AssafGordon@gmail.com",

@@ -1,0 +1,3 @@
+include detect_version.py
+include README.md
+include MANIFEST.in
