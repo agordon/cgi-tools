@@ -114,3 +114,12 @@ def check_run_cmd_list(cmd):
         http_server_error("command '%s' returned error (exit code %d)" % \
                           (cmd[0],exitcode))
     return (out,err)
+
+
+def save_file(filename, content):
+    try:
+        f = open(filename,'w')
+        f.write(content)
+        f.close()
+    except IOError as e:
+        http_server_error("failed to save '%s': %s'" % (filename, str(e)))
