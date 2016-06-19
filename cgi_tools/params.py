@@ -38,7 +38,7 @@ def save_cgi_file_param(form,var_name,suffix=None):
 
 
 
-def get_cgi_first_non_empty_param(form,param_names):
+def get_cgi_first_non_empty_param(form,param_names,allow_empty=False):
     """
     For HTML forms which allow EITHER uploading a file or pasting text, e.g.:
 
@@ -61,7 +61,8 @@ def get_cgi_first_non_empty_param(form,param_names):
 
     The first non-empty parameter is returned.
 
-    If all are empty, an HTTP 400 (bad request) error is returned.
+    If all are empty, and allow_empty=True, None is returned.
+    otherwise, an HTTP 400 (bad request) error is returned to the client.
 
     NOTE:
     The returned value is not necessarily valid text (could be UTF-8,
@@ -73,6 +74,9 @@ def get_cgi_first_non_empty_param(form,param_names):
         text = form.getfirst(p,"")
         if len(text)>0:
             return text
+
+    if allow_empty:
+        return None
 
     l = ','.join(param_names)
     http_bad_request_error("at least one CGI parameters must be non-empty: "+l)
