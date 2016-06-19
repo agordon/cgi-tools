@@ -6,6 +6,7 @@ License: BSD (See LICENSE file)
 from tempfile import NamedTemporaryFile
 from .http_responses import http_bad_request_error, http_server_error, log
 from .types import to_str_list
+from .validators import valid_in_list
 
 def save_cgi_file_param(form,var_name,suffix=None):
     if not var_name in form:
@@ -80,3 +81,12 @@ def get_cgi_first_non_empty_param(form,param_names,allow_empty=False):
 
     l = ','.join(param_names)
     http_bad_request_error("at least one CGI parameters must be non-empty: "+l)
+
+def get_options_param(form, param_name, allowed_options):
+    text = form.getfirst(param_name,"")
+    if not valid_in_list(text,allowed_options):
+        l = ','.join(allowed_options)
+        http_bad_request_error("CGI param '%s' must be one of: %s" \
+                               % (param_name,l))
+
+    return text
