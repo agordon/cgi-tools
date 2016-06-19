@@ -111,8 +111,8 @@ def check_run_cmd_list(cmd):
 
     (ok,exitcode,out,err) = run_cmd_list(cmd)
     if not ok:
-        http_server_error("command '%s' returned error (exit code %d)" % \
-                          (cmd[0],exitcode))
+        http_server_error("command '%s' returned error (exit code %d): %s" % \
+                          (cmd[0],exitcode, err))
     return (out,err)
 
 
