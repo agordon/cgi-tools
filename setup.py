@@ -13,8 +13,8 @@ setup(
     author = "Assaf Gordon",
     author_email = "AssafGordon@gmail.com",
 
-    description = ("Collection of tools for quick CGI scripts development"),
-    long_description=""" """,
+    description = "Collection of tools for quick CGI scripts development",
+    long_description="",
 
     license = "BSD",
     keywords = "CGI",
