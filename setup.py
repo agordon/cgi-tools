@@ -1,6 +1,6 @@
 """
 CGI-Tools Python Package
-Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+Copyright (C) 2016-2022 Assaf Gordon (assafgordon@gmail.com)
 License: BSD (See LICENSE file)
 """
 
@@ -10,7 +10,6 @@ from detect_version import detect_version
 setup(
     name = "cgi-tools",
     version = detect_version("cgi_tools"),
-
     author = "Assaf Gordon",
     author_email = "AssafGordon@gmail.com",
 

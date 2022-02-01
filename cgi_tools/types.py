@@ -1,6 +1,6 @@
 """
 CGI-Tools Python Package
-Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+Copyright (C) 2016-2022 Assaf Gordon (assafgordon@gmail.com)
 License: BSD (See LICENSE file)
 """
 
@@ -57,6 +57,6 @@ def to_str_list(arg):
 
     # TODO: Handle locale/charset str() conversion errors
     if is_iterable(arg):
-        return map(str,arg)
+        return list(map(str,arg))
 
     return [str(arg)]

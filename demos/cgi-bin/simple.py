@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 CGI-Tools Python Package
-Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+Copyright (C) 2016-2022 Assaf Gordon (assafgordon@gmail.com)
 License: BSD (See LICENSE file)
 """
 

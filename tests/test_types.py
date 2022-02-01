@@ -1,6 +1,6 @@
 """
 CGI-Tools Python Package
-Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+Copyright (C) 2016-2022 Assaf Gordon (assafgordon@gmail.com)
 License: BSD (See LICENSE file)
 """
 import unittest
@@ -25,7 +25,7 @@ class TypesTests(unittest.TestCase):
     def test_is_iterable(self):
         self.assertTrue ( is_iterable( [1,2,3]      ) )
         self.assertTrue ( is_iterable( range(0,10)  ) )
-        self.assertTrue ( is_iterable( xrange(0,10) ) )
+        #self.assertTrue ( is_iterable( xrange(0,10) ) )
         self.assertTrue ( is_iterable( (1,2,3)      ) )
         self.assertTrue ( is_iterable( (1,)         ) )
         self.assertTrue ( is_iterable( "hello"      ) )

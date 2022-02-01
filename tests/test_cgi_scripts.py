@@ -1,13 +1,15 @@
 """
 CGI-Tools Python Package
-Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+Copyright (C) 2016-2022 Assaf Gordon (assafgordon@gmail.com)
 License: BSD (See LICENSE file)
 """
 import unittest
 
-import os, sys, copy, urllib,re, StringIO
+import os, sys, copy, urllib,re
 from pprint import pprint
 from subprocess import Popen,PIPE
+from io import StringIO
+
 
 
 # find script's directory
@@ -29,7 +31,7 @@ class FakeCGIResponse:
         self.headers = headers
         self.content = content
 
-        self.content_as_file = StringIO.StringIO(content)
+        self.content_as_file = StringIO(content)
 
     def getcode(self):
         return self.http_code
@@ -79,7 +81,7 @@ class CGIScriptTests(unittest.TestCase):
                                " not found" % (cgi_script_file))
 
         st = os.stat(script_abs_path)
-        if st.st_mode & 0100 == 0:
+        if st.st_mode & 0o0100 == 0:
             raise RuntimeError("internal test error: cgi script file '%s'" \
                                " is not executable" % (cgi_script_file))
 
@@ -128,7 +130,7 @@ class CGIScriptTests(unittest.TestCase):
         # env['CONTENT_LENGTH'] = ""
 
         # Build query string
-        query = urllib.urlencode (get_params)
+        query = urllib.parse.urlencode (get_params)
         if query:
             env['QUERY_STRING'] = query
 
@@ -137,29 +139,31 @@ class CGIScriptTests(unittest.TestCase):
         # TODO: change when adding POST
         devnull = open("/dev/null",'r')
 
-        print "Simulating CGI script: %s (in '%s')" % (cgi_script_file, cwd)
+        print("Simulating CGI script: %s (in '%s')" % (cgi_script_file, cwd))
 
         p = Popen([script_abs_path], shell=False,
                   env=env, cwd=cwd, stdin=devnull, stdout=PIPE, stderr=PIPE)
 
         (out,err) = p.communicate()
-        print "CGI returned exit code: ", p.returncode
+        out2 = str(out.decode("ascii", errors="ignore"))
+        err2 = str(err.decode("ascii", errors="ignore"))
+        print("CGI returned exit code: ", p.returncode)
 
-        if err:
-            print "CGI printed to STDERR:"
-            print "====="
-            print err
-            print "====="
+        if err2:
+            print("CGI printed to STDERR:")
+            print("=====")
+            print(err)
+            print("=====")
 
-        if out:
-            print "CGI returned information (STDOUT):"
-            print "====="
-            print out
-            print "====="
+        if out2:
+            print("CGI returned information (STDOUT):")
+            print("=====")
+            print(out)
+            print("=====")
 
         ## Parse the returned information for the CGI script,
         ## minimally emulating the HTTP web server.
-        d = out.split('\n')
+        d = out2.split('\n')
         d = [x.strip('\r') for x in d]
 
         ## Split into HTTP headers and content
@@ -186,7 +190,7 @@ class CGIScriptTests(unittest.TestCase):
             # CGI script did not sent status, assume HTTP 200
             status = "200 OK"
 
-        print "Detected HTTP Status:", status
+        print("Detected HTTP Status:", status)
         status_code = re.search("^([0-9]+) ", status)
         if not status_code:
             raise RuntimeError("internal test error: cgi script file '%s'" \

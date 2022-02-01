@@ -1,6 +1,6 @@
 """
 CGI-Tools Python Package
-Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+Copyright (C) 2016-2022 Assaf Gordon (assafgordon@gmail.com)
 License: BSD (See LICENSE file)
 """
 import unittest
@@ -20,12 +20,14 @@ os.environ['PYTHONPATH'] = pythonpath
 # (to determine the directory of the 'standalone' scripts)
 standalone_dir=os.path.join(os.path.dirname(__file__),"standalone")
 
+python_binary = sys.executable
+
 
 class ResourceLimitTests(unittest.TestCase):
 
     def test_res_limit1(self):
         script = os.path.join(standalone_dir,"res-limit1.py")
-        cmd = ["python", script ]
+        cmd = [python_binary, script ]
         (ok,exitcode,out,err) = run_cmd_list(cmd)
 
         self.assertFalse(ok)
@@ -35,7 +37,7 @@ class ResourceLimitTests(unittest.TestCase):
 
     def test_res_limit2(self):
         script = os.path.join(standalone_dir,"res-limit2.py")
-        cmd = ["python", script ]
+        cmd = [python_binary, script ]
         (ok,exitcode,out,err) = run_cmd_list(cmd)
 
         self.assertFalse(ok)
@@ -45,7 +47,7 @@ class ResourceLimitTests(unittest.TestCase):
 
     def test_res_limit3(self):
         script = os.path.join(standalone_dir,"res-limit3.py")
-        cmd = ["python", script ]
+        cmd = [python_binary, script ]
         (ok,exitcode,out,err) = run_cmd_list(cmd)
 
         self.assertFalse(ok)
@@ -55,7 +57,7 @@ class ResourceLimitTests(unittest.TestCase):
 
     def test_res_limit4(self):
         script = os.path.join(standalone_dir,"res-limit4.py")
-        cmd = ["python", script ]
+        cmd = [python_binary, script ]
         (ok,exitcode,out,err) = run_cmd_list(cmd)
 
         self.assertTrue(ok)

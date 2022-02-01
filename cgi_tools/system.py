@@ -1,6 +1,6 @@
 """
 CGI-Tools Python Package
-Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+Copyright (C) 2016-2022 Assaf Gordon (assafgordon@gmail.com)
 License: BSD (See LICENSE file)
 """
 from __future__ import print_function
@@ -94,12 +94,11 @@ def run_cmd_list(cmd):
         p = Popen(cmd,shell=False,stdin=devnull,stdout=PIPE,stderr=PIPE)
         devnull.close()
         (out,err) = p.communicate()
-        ## NOTE:
-        ## returned values are not necessarily ASCII, or even valid text/utf/etc.
-        ## ALWAYS sanitize output.
-        ## Python (at least v2) has severe problems handling non-ascii
-        ## characters without extra processing.
-        return ( p.returncode==0, p.returncode, out, err )
+
+        #Gosh darn you, python
+        out2 = str(out.decode("ascii", errors="ignore"))
+        err2 = str(err.decode("ascii", errors="ignore"))
+        return ( p.returncode==0, p.returncode, out2, err2 )
     except IOError as e:
         http_server_error("failed to execute '%s': IOError: %s" % (str(cmd[0]), str(e)))
     except OSError as e:

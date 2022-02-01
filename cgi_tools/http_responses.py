@@ -1,10 +1,11 @@
 """
 CGI-Tools Python Package
-Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+Copyright (C) 2016-2022 Assaf Gordon (assafgordon@gmail.com)
 License: BSD (See LICENSE file)
 """
 from __future__ import print_function
 import sys, random, os
+from functools import reduce
 
 req_code = ""
 
@@ -14,7 +15,8 @@ def set_app_code(app_code):
 
 
 # Get 4 random bytes, convert to unsigned 32-bit int, use as seed.
-s = reduce(lambda x,y: x*y, map(ord,os.urandom(4)))
+v = [ord(os.urandom(1)) for x in range(4)]
+s = reduce(lambda x,y: x*y, v)
 random.seed(s)
 # Set default application code + random request code
 set_app_code(512)

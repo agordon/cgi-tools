@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 CGI-Tools Python Package
-Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+Copyright (C) 2016-2022 Assaf Gordon (assafgordon@gmail.com)
 License: BSD (See LICENSE file)
 """
 
@@ -35,5 +35,5 @@ server_address = ("127.0.0.1", 8888)
 handler.cgi_directories = ["/cgi-bin"]
 httpd = server(server_address, handler)
 
-print "Visit http://%s:%s to see CGI demos" % server_address
+print("Visit http://%s:%s to see CGI demos" % server_address)
 httpd.serve_forever()

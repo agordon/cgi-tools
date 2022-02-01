@@ -3,7 +3,7 @@ CGI-TOOLS
 
 Collection of functions for quick CGI script development.
 
-Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+Copyright (C) 2016-2022 Assaf Gordon (assafgordon@gmail.com)
 
 License: BSD
 

@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 CGI-Tools Python Package
-Copyright (C) 2016 Assaf Gordon (assafgordon@gmail.com)
+Copyright (C) 2016-2022 Assaf Gordon (assafgordon@gmail.com)
 License: BSD (See LICENSE file)
 
 
@@ -86,6 +86,7 @@ def get_git_version(filename):
     try:
         cmd = ['git','describe','--dirty','--abbrev=4']
         git_ver = check_output(cmd)
+        git_ver = git_ver.decode('ascii','ignore')
         # convert git-describe string to PEP-440 string:
         git_ver = git_ver.strip().replace("-","+",1).replace("-",".")
         update_fixed_version(filename, git_ver)
@@ -151,4 +152,4 @@ if __name__ == "__main__":
     if len(sys.argv)<=1:
         sys.exit("usage: %s [pacakge directory]")
     v = detect_version(sys.argv[1])
-    print v
+    print(v)
