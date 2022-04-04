@@ -1,0 +1,289 @@
+#!/usr/bin/env python3
+import argparse
+import json
+import os
+import sys
+from urllib.parse import urlparse
+from jinja2 import FileSystemLoader, Environment, BytecodeCache, FileSystemBytecodeCache
+from werkzeug.datastructures import *
+from werkzeug.http import *
+from werkzeug.urls import url_decode
+from datetime import datetime
+import pytz
+from http.server import BaseHTTPRequestHandler
+import cgitb
+import cgi_tools
+
+MTTZ = pytz.timezone("America/Edmonton")
+
+def die(reason):
+    prog = os.path.basename(sys.argv[0])
+    sys.exit(prog + ": " + reason)
+
+def enable_cgi_debug():
+    cgitb.enable()
+
+##
+## Parse arguments
+##
+class CgiHelpAction(argparse.Action):
+        def __init__(self, option_strings, dest, **kwargs):
+            super(CgiHelpAction,self).__init__(option_strings, '', nargs=0, **kwargs)
+
+        def __call__(self, parser, namespace, values, option_string=None):
+            text="""
+Use a shebang line (#!) to be able to run the template file
+as a CGI script, like so:
+
+==========
+
+$ cat<<'EOF'>demo.j2
+#!/usr/bin/env -S jinja2-cgi
+<html>
+<pre>
+Hello There! time is {{ localtime }}.
+You are at {{ request.remote_addr }}.
+</pre>
+</html>
+EOF
+
+$ chmod a+x demo.j2
+
+=========
+
+In Debian, install "nginx-extras" and "fcgiwrap" packages,
+and use a location block like so:
+
+    location /foobar/ {
+        fastcgi_param SCRIPT_FILENAME /var/www/html/demo.j2 ;
+        include fastcgi_params;
+        fastcgi_pass unix:/var/run/fcgiwrap.socket;
+    }
+
+=========
+
+To enable CGI debugging, change the shebang line to:
+
+    #!/usr/bin/env -S jinja2-cgi --cgi-debug
+
+"""
+            print(text)
+            sys.exit(0)
+
+
+class StaticHelpAction(argparse.Action):
+        def __init__(self, option_strings, dest, **kwargs):
+            super(StaticHelpAction,self).__init__(option_strings, '', nargs=0, **kwargs)
+
+        def __call__(self, parser, namespace, values, option_string=None):
+            text="""
+Use a shebang line (#!) with --static to automatically regenerate a
+corresponding HTML file, like so:
+
+==========
+
+$ cat<<'EOF'>demo.j2
+#!/usr/bin/env -S jinja2-cgi --static
+<html>
+Hello There! time is {{ localtime }}
+</html>
+EOF
+
+$ chmod a+x demo.j2
+$ ./demo.j2
+
+=========
+
+A file named 'demo.html' will be generated.
+Note that CGI variables (e.g. HTTP_REMOTE_ADDR) are
+not available.
+
+"""
+            print(text)
+            sys.exit(0)
+
+class ShowVersionAction(argparse.Action):
+        def __init__(self, option_strings, dest, **kwargs):
+            super(ShowVersionAction,self).__init__(option_strings, '', nargs=0, **kwargs)
+
+        def __call__(self, parser, namespace, values, option_string=None):
+            text="Jinja2-cgi - part of cgi_tools version %s" % ( cgi_tools.version.__version__ )
+            print(text)
+            sys.exit(0)
+
+
+parser = argparse.ArgumentParser(
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    description="Jinja2 Command-line/cgi compiler",
+    epilog="""
+    """
+)
+parser.add_argument("--cgi-debug",action="store_true",default=False,
+                    help="Enable CGITB module debugging (will return pretty HTML" + 
+                    "on exceptions, instead of generic HTTP-502-Gateway error)")
+parser.add_argument('--cgi-help', action=CgiHelpAction,
+                    help="Show CGI examples")
+parser.add_argument("--data","-d",metavar="KEY=VALUE",type=str,action="append",
+                    help="Add a string value that will be available inside the template")
+parser.add_argument("--output","-O",type=argparse.FileType('w'),
+                    help="Write to FILE (instead of stdout)")
+parser.add_argument("--static",action="store_true",default=False,
+                    help="Automatically decude the output file based on the input template filename")
+parser.add_argument('--static-help', action=StaticHelpAction,
+                    help="Show --static examples")
+parser.add_argument('--version', help="Show version",action=ShowVersionAction)
+parser.add_argument("template_file",metavar="FILE.J2",type=str,
+                    help="Input Jinja2 template file")
+args = parser.parse_args()
+
+
+##
+## Argument Validation
+##
+if not os.path.isfile(args.template_file):
+    die("Template file '%s' not found (or not a regular file)" % ( args.template_file ) )
+
+data = { }
+
+if args.data:
+    for x in args.data:
+        v = x.strip().split("=",1)
+        if len(v) != 2:
+            die("invalid --data value '%s' (should be KEY=VALUE)" % (x))
+        data[ v[0].strip() ] = v[1].strip()
+
+if args.cgi_debug:
+    enable_cgi_debug()
+
+##
+## Template Processing starts here
+##
+
+# Add environment variables
+env = dict(os.environ)
+data["env"] = env
+
+def is_http_cgi_request(env):
+    return ("REQUEST_SCHEME" in env and \
+        "HTTP_HOST" in env and \
+        "REQUEST_URI" in env and \
+        "HTTP_ACCEPT" in env)
+
+def create_request_from_env(env):
+    # Add CGI parameters, similar to flask's "jinja2.request"
+    request_scheme=env.get("REQUEST_SCHEME","http")
+    request_uri = env.get("REQUEST_URI","")
+    http_host = env.get("HTTP_HOST","")
+    server_port = env.get("SERVER_PORT","")
+    url_str = request_scheme + "://" + http_host + ":" + server_port + request_uri
+    url = urlparse(url_str)
+
+    request = {}
+    request["accept_languages"] = LanguageAccept(parse_accept_header( env.get("HTTP_ACCEPT_LANGUAGE")  ))
+    request["accept_mimetypes"] = MIMEAccept(parse_accept_header( env.get("HTTP_ACCEPT")  ))
+    request["accept_encodings"] = parse_accept_header( env.get("HTTP_ACCEPT_ENCODING")  )
+    request["base_url"] = url.path
+    request["args"] = url_decode(url.query)
+    request["date"] = datetime.now(MTTZ)
+    request["query_string"] = url.query
+    request["scheme"] = url.scheme
+    request["url"] = url
+    request["root_url"] = url.scheme + "://" + url.netloc + url.path
+    request["full_path"] = url.path + "?" + url.query
+    request["host"] = url.scheme + "://" + url.netloc
+    request["host_url"] = url.scheme + "://" + url.hostname
+    request["is_secure"] = (request_scheme == "https")
+    request["method"] = env.get("REQUEST_METHOD","GET")
+    request["content_type"] = env.get("CONTENT_TYPE","")
+    request["content_length"] = env.get("CONTENT_LENGTH","")
+    request["remote_addr"] = env.get("REMOTE_ADDR","")
+    request["remote_user"] = env.get("REMOTE_USER","")
+    request["server"] = (env.get("SERVER_NAME",None), env.get("SERVER_PORT",None))
+
+    return request
+
+class CgiResponse():
+    def __init__(self):
+        self.status_code = 200
+        self.content_type = "text/html"
+
+    def set_status_code(self, code):
+        self.status_code = int(code)
+        return ""
+
+    def set_http_code(self, code):
+        return self.set_status_code(code)
+
+    def set_content_type(self,mime):
+        self.content_type = mime
+        return ""
+
+    def set_text_type(self):
+        return self.set_content_type("text/plain")
+
+    def get_http_response(self):
+        try:
+            reason = BaseHTTPRequestHandler.responses[self.status_code][0]
+        except KeyError:
+            reason = "Custom Failure Code"
+
+        resp1 = "Status: %d %s" % ( self.status_code, reason )
+        cont  = "content-type: %s" % ( self.content_type )
+        crlf = "\r\n"
+
+        s = resp1 + crlf + cont + crlf + crlf
+        return s
+
+
+if is_http_cgi_request(env) and not args.static:
+    request = create_request_from_env(env)
+    data["request"] = request
+    data["response"] = CgiResponse()
+
+data["localtime"] = datetime.now(MTTZ)
+data["utctime"] = datetime.now()
+
+
+##
+## Template Rendering Starts Here
+##
+class SheBangEnvironment(Environment):
+    def preprocess(self,source, name=None, filename=None):
+        s = super().preprocess(source, name, filename)
+        #discard optional "shebang" header
+        if s.startswith("#!"):
+            eol = s.find("\n")
+            if eol != -1:
+                s = s[(eol+1):]
+        return s
+
+dirname = os.path.dirname(args.template_file)
+loader = FileSystemLoader(dirname)
+bcc = FileSystemBytecodeCache()
+env = SheBangEnvironment(loader=loader, bytecode_cache=bcc)
+template = env.get_template(os.path.basename(args.template_file))
+html = template.render(**data)
+
+#print("content-type: text/html\r\n\r\n")
+if "response" in data:
+    resp = data["response"].get_http_response()
+    print(resp)
+
+if args.output:
+    outfile = args.output
+elif args.static:
+    infilename = args.template_file
+    lastdot = infilename.rfind(".")
+    if lastdot != -1:
+        outfilename = infilename[:lastdot] + ".html"
+    else:
+        outfilename = infilename + ".html"
+
+    if outfilename == infilename:
+        die("Output file name '%s' is same as input file - not overwriting" % (outfilename))
+
+    outfile = open(outfilename, "w")
+else:
+    outfile = sys.stdout
+
+print(html,file=outfile)

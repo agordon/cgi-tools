@@ -20,11 +20,16 @@ setup(
     keywords = "CGI",
     url = "https://github.com/agordon/cgi-tools",
     packages=['cgi_tools'],
+    scripts=['bin/jinja2-cgi'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: BSD License",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: CGI Tools/Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules"
+    ],
+    install_requires=[
+          'jinja2',
+          'werkzeug'
     ],
     test_suite = 'tests',
 )
